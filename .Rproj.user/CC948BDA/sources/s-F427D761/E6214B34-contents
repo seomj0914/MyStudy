@@ -1,0 +1,45 @@
+com <- read.csv("test1.csv")
+head(com)
+library(dplyr)
+
+#지점별 직원 인원수 구하기
+com_1 <- com %>% filter(group == 1)
+com_2 <- com %>% filter(group == 2)
+sum(com_1$group)
+sum(com_2$group)/2
+
+#지점별 자동차 평균 판매대수 구하기
+com_1$count <- ifelse(com_1$count==99,NA,com_1$count)
+com_2$count <- ifelse(com_2$count==99,NA,com_2$count)
+
+mean(com_1$count, na.rm=T)
+mean(com_2$count, na.rm=T)
+
+#두 지점 간의 영업 실적 차이가 있는지 검증하시오.
+com_1_no_intern <- na.omit(com_1)
+com_2_no_intern <- na.omit(com_2)
+#변수 이름이 너무 길어서 짧게 변경
+no1 <- com_1_no_intern
+no2 <- com_2_no_intern
+
+sum(no1$group)
+sum(no2$group)/2
+
+#그룹1의 인원은 22명 그룹2의 인원은 35명으로 그룹 1의 정규성 검정을 해야한다.
+#정규성 검정
+#귀무가설 : 자료가 정규분포이다
+#대립가설 : 자료가 정규분포가 아니다
+install.packages("nortest")
+library(nortest)
+
+lillie.test(no1$count)
+#p-value가 0.3374로 0.05보다 크므로 정규성을 띈다
+
+df_no = data.frame( x = c(rep("1",length(no1)), rep("2",length(no2))),
+                    y = c(no1, no2))
+
+#등분산 검정
+install.packages("lawstat")
+library(lawstat)
+
+levene.test(df_no$y, df_no$x, location = "mean")

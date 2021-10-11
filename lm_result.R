@@ -1,0 +1,30 @@
+# installing and loading readxl package 
+install.packages("sqldf")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("readxl")
+install.packages('Rcpp')
+install.packages('car')
+library(car)
+
+library(readxl)
+library(httr)
+library(ggplot2)
+library(sqldf)
+library(dplyr)
+
+
+
+#6. ysr-데이터 셋 가져오기 
+# 연령대(20대+50대) + 지역(서울+경기+부산울산경남) + 이념성향(중도) + 직업(사무전문직+전업주부) 
+acs=read_excel("acs_src.xlsx")
+str(mji)
+
+#회귀분석
+model_mji = lm(result~kki+service+seoul, data=mji)
+summary(model_mji)
+
+#다중공선성 확인
+
+vif(model_mji)
+
